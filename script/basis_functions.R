@@ -343,7 +343,7 @@ season2timeseason <- function(season) {
   } else if (season == "SON") {
     timeseason <- 9:11
   } else if (season == "DJFM") {
-    timeseason <- c(1:3, 12)
+    timeseason <- c(7:10)
   } else if (season == "JJAS") {
     timeseason <- 6:9
   # otherwise look for strings

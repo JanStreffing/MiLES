@@ -18,12 +18,17 @@ usage()
    echo
 }
 
-if [ $# -ne 1 ]; then
+if [ $# -ne 4 ]; then
    usage
    exit 1
 fi
 
 namelist=$1
+oifs_res=$2
+oifs_id=$3
+oifs_exp=$4
+
+dataset_exp=${2}_${3}
 
 if [ ! -f $namelist ] ; then
 	"The namelist does not exists!"
@@ -51,7 +56,7 @@ function has_config()
 
 # output file type for figures (pdf, png, eps)
 # pdf are set by default
-#output_file_type="pdf"
+output_file_type="png"
 
 # map projection that is used for plotting
 # "no": standard lon-lat plotting (fastest)
@@ -117,7 +122,7 @@ expid_ref=${expid_ref:-}
 ens_ref=${ens_ref:-}
 project_ref=${project_ref:-}
 
-# create a unique identifieri for each experiment
+# create a unique identifiere for each experiment
 info_exp=${project_exp}!${dataset_exp}!${expid_exp}!${ens_exp}!${year1_exp}!${year2_exp}
 
 # if we are using standard climatology
@@ -129,7 +134,6 @@ if ${std_clim} ; then
 	REFDIR=$PROGDIR/clim
 	infos=${info_exp}
 else
-
         REFDIR=$FILESDIR
 	info_ref=${project_ref}!${dataset_ref}!${expid_ref}!${ens_ref}!${year1_ref}!${year2_ref}
         infos=$(echo ${info_exp} ${info_ref})
@@ -279,48 +283,48 @@ echo    "###########################################################"
 ################################################
 
 #check how many ensemble you have
-#aens=($ens_list); nens=${!ens[@]}
-#echo "Ensemble members are $ens_list"
+aens=($ens_list); nens=${!ens[@]}
+echo "Ensemble members are $ens_list"
 #
-##For blocking only
-#if [[ "${ens_list}" == "NO" ]] || [[ ${nens} -eq 0 ]] ; then
+#For blocking only
+if [[ "${ens_list}" == "NO" ]] || [[ ${nens} -eq 0 ]] ; then
 	#echo "Only one ensemble member, exiting..."
-#else
-	#echo "Create ensemble mean... "
-	##create loop using flags
-	#kinds=${kinds:-}
-	#[[ has_config block ]] && kinds="$kinds Block"   
-	##[[ has_config eofs ]] && kinds="$kinds EOF" 
-	##[[ has_config regimes ]] && kinds="$kinds Regimes" 
-	#echo $kinds
-#
-	#for kind in $kinds ; do
-#
-		#for season in ${seasons} ; do
-		#
-			#case for file names
-			#case $kind in 
-				#Block) 	 
-					#MEANFILE=$FILESDIR/${dataset_exp}/mean/${kind}/${year1}_${year2}/$season/BlockClim_${dataset_exp}_mean_${year1}_${year2}_${season}.nc
-					#INFILES='$FILESDIR/${dataset_exp}/*/${kind}/${year1}_${year2}/$season/BlockClim_${dataset_exp}_*.nc'
-					#ARGS="$dataset_exp mean $year1_exp $year2_exp $dataset_ref $ens_ref $year1_ref $year2_ref $season $FIGDIR $FILESDIR $REFDIR $CFGSCRIPT $PROGDIR"
-					#SCRIPT=$PROGDIR/script/block_figures.R
-				#;;	
+else
+	echo "Create ensemble mean... "
+	#create loop using flags
+	kinds=${kinds:-}
+	[[ has_config block ]] && kinds="$kinds Block"   
+	#[[ has_config eofs ]] && kinds="$kinds EOF" 
+	#[[ has_config regimes ]] && kinds="$kinds Regimes" 
+	echo $kinds
+
+	for kind in $kinds ; do
+
+		for season in ${seasons} ; do
+		
+			case for file names
+			case $kind in 
+				Block) 	 
+					MEANFILE=$FILESDIR/${dataset_exp}/mean/${kind}/${year1}_${year2}/$season/BlockClim_${dataset_exp}_mean_${year1}_${year2}_${season}.nc
+					INFILES='$FILESDIR/${dataset_exp}/*/${kind}/${year1}_${year2}/$season/BlockClim_${dataset_exp}_*.nc'
+					ARGS="$dataset_exp mean $year1_exp $year2_exp $dataset_ref $ens_ref $year1_ref $year2_ref $season $FIGDIR $FILESDIR $REFDIR $CFGSCRIPT $PROGDIR"
+					SCRIPT=$PROGDIR/script/block_figures.R
+				;;	
 				#Regimes)
-				##        MEANFILE=$FILESDIR/${dataset_exp}/mean/${kind}/${year1}_${year2}/$season/RegimesPattern_${dataset_exp}_mean_${year1}_${year2}_${season}.nc
-				##        INFILES='$FILESDIR/${dataset_exp}/*/${kind}/${year1}_${year2}/$season/RegimesPattern_${dataset_exp}_*.nc'
-				##        ARGS="$dataset_exp mean $year1_exp $year2_exp $dataset_ref $ens_ref $year1_ref $year2_ref $season $FIGDIR $FILESDIR $REFDIR $CFGSCRIPT $PROGDIR $nclusters"
-				##        SCRIPT=$PROGDIR/script/regimes_figures.R
-				##	;;
-			#esac
-	#
-			##mean and plot
-			#MEANDIR=$(dirname $MEANFILE)
-			#rm -rf $MEANDIR; mkdir -p $MEANDIR
-			#$cdo4 timmean -cat $(eval echo $INFILES) $MEANFILE
-			#time $Rscript "$SCRIPT" $ARGS		
-			#
-		#done
-	#done
-#fi
+				#        MEANFILE=$FILESDIR/${dataset_exp}/mean/${kind}/${year1}_${year2}/$season/RegimesPattern_${dataset_exp}_mean_${year1}_${year2}_${season}.nc
+				#        INFILES='$FILESDIR/${dataset_exp}/*/${kind}/${year1}_${year2}/$season/RegimesPattern_${dataset_exp}_*.nc'
+				#        ARGS="$dataset_exp mean $year1_exp $year2_exp $dataset_ref $ens_ref $year1_ref $year2_ref $season $FIGDIR $FILESDIR $REFDIR $CFGSCRIPT $PROGDIR $nclusters"
+				#        SCRIPT=$PROGDIR/script/regimes_figures.R
+				#	;;
+			esac
+	
+			#mean and plot
+			MEANDIR=$(dirname $MEANFILE)
+			rm -rf $MEANDIR; mkdir -p $MEANDIR
+			$cdo4 timmean -cat $(eval echo $INFILES) $MEANFILE
+			time $Rscript "$SCRIPT" $ARGS		
+			
+		done
+	done
+fi
 

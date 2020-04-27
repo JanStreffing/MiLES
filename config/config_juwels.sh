@@ -24,9 +24,11 @@ export OUTPUTDIR=/p/largedata/hhb19/jstreffi/runtime/oifsamip/MILES
 #CDO
 #if you CDO is not equipped of NetCDF4 compression change "cdo4" command here
 #Rscript is the script-launcher by R
+cdo=cdo
+Rscript=Rscript
 
-cdo=/p/project/chhb19/jstreffi/software/miniconda3/pkgs/cdo-1.9.6-hd104f1c_1006/bin/cdo
-Rscript=/p/project/chhb19/jstreffi/software/R-3.4.1/install/bin/Rscript
+#cdo=/p/project/chhb19/jstreffi/software/miniconda3/pkgs/cdo-1.9.6-hd104f1c_1006/bin/cdo
+#Rscript=/p/project/chhb19/jstreffi/software/R-3.4.1/install/bin/Rscript
 
 cdonc="$cdo -f nc"
 cdo4="$cdo -f nc4 -z zip"

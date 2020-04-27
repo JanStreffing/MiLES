@@ -23,17 +23,17 @@ miles.block.multiple <- function(project, dataset, expid, ens, year1, year2, sea
     savefile2 <- file.builder(FILESDIR, "Block", paste0(tracking_index, "_Full"), project, dataset, expid, ens, year1, year2, season)
 
     # check if data is already there to avoid re-run
-    if (file.exists(savefile1) & file.exists(savefile2)) {
-      print("Actually requested blocking data is already there!")
-      print(savefile1)
-      print(savefile2)
-      if (as.logical(doforce)) {
-        print("Running with doforce=true... re-run!")
-      } else {
-        print("Skipping... activate doforce=true if you want to re-run it")
-        next
-      }
-    }
+    #if (file.exists(savefile1) & file.exists(savefile2)) {
+    #  print("Actually requested blocking data is already there!")
+    #  print(savefile1)
+    #  print(savefile2)
+    #  if (as.logical(doforce)) {
+    #    print("Running with doforce=true... re-run!")
+    #  } else {
+    #    print("Skipping... activate doforce=true if you want to re-run it")
+    #    next
+    #  }
+    #}
 
     # new file opening
     fieldlist <- ncdf.opener.universal(z500filename, namevar = "zg", tmonths = timeseason, tyears = years, rotate = "full", exportlonlat = F)
